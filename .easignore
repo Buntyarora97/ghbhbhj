@@ -1,0 +1,16 @@
+pnpm-workspace.yaml
+pnpm-lock.yaml
+.pnpmfile.cjs
+.npmrc
+lib/
+artifacts/admin/
+artifacts/api-server/
+artifacts/mockup-sandbox/
+scripts/
+node_modules/
+.local/
+attached_assets/
+DEPLOYMENT_GUIDE.md
+build-apk.sh
+render.yaml
+.env.example
