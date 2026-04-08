@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'Cinzel', serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fadeIn 0.5s ease-out;
+  --animate-slide-up: slideUp 0.4s ease-out forwards;
+}
+
+:root {
+  /* Dark Royal Theme: Deep Crimson & Black base, Gold Primary */
+  --background: 350 50% 4%;     /* Very dark reddish-black */
+  --foreground: 45 30% 90%;     /* Soft warm off-white */
+  
+  --card: 350 40% 7%;           /* Slightly lighter reddish-black */
+  --card-foreground: 45 30% 90%;
+  
+  --primary: 43 74% 49%;        /* Rich Gold */
+  --primary-foreground: 350 50% 4%; /* Black text on gold */
+  
+  --secondary: 350 60% 15%;     /* Deep Crimson */
+  --secondary-foreground: 45 30% 90%;
+  
+  --accent: 350 70% 25%;        /* Brighter Crimson for accents */
+  --accent-foreground: 45 30% 90%;
+  
+  --destructive: 0 84% 45%;     /* Danger Red */
+  --destructive-foreground: 0 0% 100%;
+  
+  --muted: 350 30% 12%;         /* Muted dark red/brown */
+  --muted-foreground: 45 20% 60%; /* Dimmed warm text */
+  
+  --border: 43 40% 25%;         /* Dim gold border */
+  --input: 350 40% 10%;         /* Input background */
+  --ring: 43 74% 49%;           /* Gold ring on focus */
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased font-sans selection:bg-primary/30 selection:text-primary;
+    background-image: radial-gradient(circle at top right, rgba(139, 0, 0, 0.05), transparent 40%),
+                      radial-gradient(circle at bottom left, rgba(212, 175, 55, 0.03), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-wide text-transparent bg-clip-text bg-gradient-to-br from-white to-white/70;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}

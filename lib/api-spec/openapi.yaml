@@ -1,0 +1,1045 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Haryana Ki Shan Gaming Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: auth
+  - name: markets
+  - name: bets
+  - name: wallet
+  - name: admin
+  - name: results
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: registerUser
+      tags: [auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/login:
+    post:
+      operationId: loginUser
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /markets:
+    get:
+      operationId: getMarkets
+      tags: [markets]
+      summary: Get all active markets
+      responses:
+        "200":
+          description: Markets list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketsResponse"
+
+  /bets:
+    post:
+      operationId: placeBet
+      tags: [bets]
+      summary: Place a bet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaceBetRequest"
+      responses:
+        "200":
+          description: Bet placed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BetResponse"
+
+  /bets/my:
+    get:
+      operationId: getMyBets
+      tags: [bets]
+      summary: Get my bets
+      responses:
+        "200":
+          description: My bets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BetsListResponse"
+
+  /wallet/balance:
+    get:
+      operationId: getWalletBalance
+      tags: [wallet]
+      summary: Get wallet balance
+      responses:
+        "200":
+          description: Wallet balance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletBalanceResponse"
+
+  /wallet/transactions:
+    get:
+      operationId: getTransactions
+      tags: [wallet]
+      summary: Get transaction history
+      responses:
+        "200":
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionsResponse"
+
+  /wallet/active-upi:
+    get:
+      operationId: getActiveUpi
+      tags: [wallet]
+      summary: Get active UPI for deposit
+      responses:
+        "200":
+          description: Active UPI
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActiveUpiResponse"
+
+  /wallet/deposit:
+    post:
+      operationId: requestDeposit
+      tags: [wallet]
+      summary: Request deposit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepositRequest"
+      responses:
+        "200":
+          description: Deposit request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /wallet/withdraw:
+    post:
+      operationId: requestWithdraw
+      tags: [wallet]
+      summary: Request withdrawal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawRequest"
+      responses:
+        "200":
+          description: Withdraw request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /results/latest:
+    get:
+      operationId: getLatestResults
+      tags: [results]
+      summary: Get latest results
+      responses:
+        "200":
+          description: Latest results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResultsResponse"
+
+  /referral/info:
+    get:
+      operationId: getReferralInfo
+      tags: [auth]
+      summary: Get referral info
+      responses:
+        "200":
+          description: Referral info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReferralInfoResponse"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginRequest"
+      responses:
+        "200":
+          description: Admin login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResponse"
+
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [admin]
+      summary: Get admin dashboard stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStatsResponse"
+
+  /admin/users:
+    get:
+      operationId: getAdminUsers
+      tags: [admin]
+      summary: Get all users
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUsersResponse"
+
+  /admin/users/{id}/block:
+    patch:
+      operationId: blockUser
+      tags: [admin]
+      summary: Block/unblock user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlockUserRequest"
+      responses:
+        "200":
+          description: User blocked/unblocked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/users/{id}/balance:
+    patch:
+      operationId: editUserBalance
+      tags: [admin]
+      summary: Edit user balance
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditBalanceRequest"
+      responses:
+        "200":
+          description: Balance updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/markets:
+    get:
+      operationId: getAdminMarkets
+      tags: [admin]
+      summary: Get all markets for admin
+      responses:
+        "200":
+          description: Markets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketsResponse"
+    post:
+      operationId: createMarket
+      tags: [admin]
+      summary: Create market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMarketRequest"
+      responses:
+        "200":
+          description: Market created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/markets/{id}:
+    patch:
+      operationId: updateMarket
+      tags: [admin]
+      summary: Update market
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMarketRequest"
+      responses:
+        "200":
+          description: Market updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+    delete:
+      operationId: deleteMarket
+      tags: [admin]
+      summary: Delete market
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Market deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/results:
+    post:
+      operationId: declareResult
+      tags: [admin]
+      summary: Declare result for market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeclareResultRequest"
+      responses:
+        "200":
+          description: Result declared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/deposits:
+    get:
+      operationId: getAdminDeposits
+      tags: [admin]
+      summary: Get deposit requests
+      responses:
+        "200":
+          description: Deposit requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDepositsResponse"
+
+  /admin/deposits/{id}/approve:
+    patch:
+      operationId: approveDeposit
+      tags: [admin]
+      summary: Approve deposit
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deposit approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/deposits/{id}/reject:
+    patch:
+      operationId: rejectDeposit
+      tags: [admin]
+      summary: Reject deposit
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deposit rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/withdrawals:
+    get:
+      operationId: getAdminWithdrawals
+      tags: [admin]
+      summary: Get withdrawal requests
+      responses:
+        "200":
+          description: Withdrawal requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWithdrawalsResponse"
+
+  /admin/withdrawals/{id}/approve:
+    patch:
+      operationId: approveWithdrawal
+      tags: [admin]
+      summary: Approve withdrawal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Withdrawal approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/withdrawals/{id}/reject:
+    patch:
+      operationId: rejectWithdrawal
+      tags: [admin]
+      summary: Reject withdrawal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Withdrawal rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/upi:
+    get:
+      operationId: getUpiAccounts
+      tags: [admin]
+      summary: Get UPI accounts
+      responses:
+        "200":
+          description: UPI accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpiAccountsResponse"
+    post:
+      operationId: addUpiAccount
+      tags: [admin]
+      summary: Add UPI account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddUpiRequest"
+      responses:
+        "200":
+          description: UPI added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/upi/{id}:
+    delete:
+      operationId: deleteUpiAccount
+      tags: [admin]
+      summary: Delete UPI account
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: UPI deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/bet-analytics:
+    get:
+      operationId: getBetAnalytics
+      tags: [admin]
+      summary: Get bet analytics
+      parameters:
+        - in: query
+          name: marketId
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Bet analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BetAnalyticsResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    MessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        referralCode:
+          type: string
+      required: [name, phone, password]
+
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+      required: [phone, password]
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/UserProfile"
+      required: [success, token, user]
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        upiId:
+          type: string
+        walletBalance:
+          type: string
+        referralCode:
+          type: string
+        isBlocked:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, name, phone, walletBalance, referralCode, isBlocked, createdAt]
+
+    MarketItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        resultTime:
+          type: string
+        isActive:
+          type: boolean
+        latestResult:
+          type: string
+        isLive:
+          type: boolean
+      required: [id, name, resultTime, isActive, isLive]
+
+    MarketsResponse:
+      type: object
+      properties:
+        markets:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketItem"
+      required: [markets]
+
+    PlaceBetRequest:
+      type: object
+      properties:
+        marketId:
+          type: integer
+        gameType:
+          type: string
+        number:
+          type: string
+        amount:
+          type: number
+      required: [marketId, gameType, number, amount]
+
+    BetItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        marketName:
+          type: string
+        gameType:
+          type: string
+        number:
+          type: string
+        amount:
+          type: string
+        winAmount:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+      required: [id, marketName, gameType, number, amount, status, createdAt]
+
+    BetResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        bet:
+          $ref: "#/components/schemas/BetItem"
+        newBalance:
+          type: string
+      required: [success, bet, newBalance]
+
+    BetsListResponse:
+      type: object
+      properties:
+        bets:
+          type: array
+          items:
+            $ref: "#/components/schemas/BetItem"
+      required: [bets]
+
+    WalletBalanceResponse:
+      type: object
+      properties:
+        balance:
+          type: string
+      required: [balance]
+
+    TransactionItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        amount:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+      required: [id, type, amount, status, createdAt]
+
+    TransactionsResponse:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionItem"
+      required: [transactions]
+
+    ActiveUpiResponse:
+      type: object
+      properties:
+        upiId:
+          type: string
+        holderName:
+          type: string
+      required: [upiId]
+
+    DepositRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        upiId:
+          type: string
+        screenshotUrl:
+          type: string
+      required: [amount, upiId]
+
+    WithdrawRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        upiId:
+          type: string
+      required: [amount, upiId]
+
+    ResultItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        marketId:
+          type: integer
+        marketName:
+          type: string
+        resultNumber:
+          type: string
+        gameDate:
+          type: string
+        createdAt:
+          type: string
+      required: [id, marketId, marketName, resultNumber, gameDate, createdAt]
+
+    ResultsResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultItem"
+      required: [results]
+
+    ReferralInfoResponse:
+      type: object
+      properties:
+        referralCode:
+          type: string
+        totalReferrals:
+          type: integer
+        totalEarnings:
+          type: string
+      required: [referralCode, totalReferrals, totalEarnings]
+
+    AdminLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    AdminAuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+        admin:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+          required: [id, name, email]
+      required: [success, token, admin]
+
+    DashboardStatsResponse:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        totalDeposits:
+          type: string
+        totalWithdrawals:
+          type: string
+        totalBets:
+          type: string
+        totalWinnings:
+          type: string
+        netProfit:
+          type: string
+        taxAmount:
+          type: string
+        pendingDeposits:
+          type: integer
+        pendingWithdrawals:
+          type: integer
+      required: [totalUsers, activeUsers, totalDeposits, totalWithdrawals, totalBets, totalWinnings, netProfit, taxAmount, pendingDeposits, pendingWithdrawals]
+
+    AdminUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserProfile"
+      required: [users]
+
+    BlockUserRequest:
+      type: object
+      properties:
+        isBlocked:
+          type: boolean
+      required: [isBlocked]
+
+    EditBalanceRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        operation:
+          type: string
+      required: [amount, operation]
+
+    CreateMarketRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        resultTime:
+          type: string
+        isActive:
+          type: boolean
+      required: [name, resultTime]
+
+    DeclareResultRequest:
+      type: object
+      properties:
+        marketId:
+          type: integer
+        resultNumber:
+          type: string
+      required: [marketId, resultNumber]
+
+    AdminDepositsResponse:
+      type: object
+      properties:
+        deposits:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              userId:
+                type: integer
+              userName:
+                type: string
+              userPhone:
+                type: string
+              amount:
+                type: string
+              upiId:
+                type: string
+              screenshotUrl:
+                type: string
+              status:
+                type: string
+              createdAt:
+                type: string
+            required: [id, userId, amount, upiId, status, createdAt]
+      required: [deposits]
+
+    AdminWithdrawalsResponse:
+      type: object
+      properties:
+        withdrawals:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              userId:
+                type: integer
+              userName:
+                type: string
+              userPhone:
+                type: string
+              amount:
+                type: string
+              upiId:
+                type: string
+              status:
+                type: string
+              createdAt:
+                type: string
+            required: [id, userId, amount, upiId, status, createdAt]
+      required: [withdrawals]
+
+    UpiAccountItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        upiId:
+          type: string
+        holderName:
+          type: string
+        isActive:
+          type: boolean
+      required: [id, upiId, isActive]
+
+    UpiAccountsResponse:
+      type: object
+      properties:
+        upiAccounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/UpiAccountItem"
+      required: [upiAccounts]
+
+    AddUpiRequest:
+      type: object
+      properties:
+        upiId:
+          type: string
+        holderName:
+          type: string
+      required: [upiId]
+
+    BetAnalyticsItem:
+      type: object
+      properties:
+        number:
+          type: string
+        totalAmount:
+          type: string
+        usersCount:
+          type: integer
+      required: [number, totalAmount, usersCount]
+
+    BetAnalyticsResponse:
+      type: object
+      properties:
+        analytics:
+          type: array
+          items:
+            $ref: "#/components/schemas/BetAnalyticsItem"
+        totalCollected:
+          type: string
+        totalPayout:
+          type: string
+        netProfit:
+          type: string
+      required: [analytics, totalCollected, totalPayout, netProfit]

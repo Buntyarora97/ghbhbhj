@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Haryana Ki Shan",
+    "slug": "haryana-ki-shan",
+    "version": "1.0.0",
+    "jsEngine": "jsc",
+    "android": {
+      "package": "com.haryanakishan.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "793bfc6a-7a8d-4e81-97ad-bca7e9b0301d"
+      }
+    }
+  }
+}
