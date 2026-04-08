@@ -40,7 +40,11 @@
     "extra": {
       "router": {
         "origin": "https://replit.com/"
+      },
+      "eas": {
+        "projectId": "870934ff-3aec-4d40-a714-b18e59a03c55"
       }
-    }
+    },
+    "owner": "sahilarora97"
   }
 }
