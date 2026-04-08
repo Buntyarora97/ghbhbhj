@@ -40,11 +40,7 @@
     "extra": {
       "router": {
         "origin": "https://replit.com/"
-      },
-      "eas": {
-        "projectId": "5f0a4085-1e2d-4197-94bb-4edfbacff695"
       }
-    },
-    "owner": "sahil.arora"
+    }
   }
 }
