@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "https://haryana-my-love-2jd4.onrender.com/api";
+const BASE_URL = "https://ghbhbhj.onrender.com/api";
 
 async function getToken(): Promise<string | null> {
   return AsyncStorage.getItem("auth_token");
