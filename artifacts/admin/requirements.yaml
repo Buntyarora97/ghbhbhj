@@ -1,0 +1,20 @@
+packages:
+  "framer-motion": "For page transitions and fluid micro-interactions"
+  "recharts": "For displaying beautiful charts on the dashboard and analytics pages"
+  "date-fns": "For formatting dates in tables and headers"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+  "lucide-react": "For beautiful consistent iconography"
+
+images:
+  - path: "artifacts/admin/public/images/auth-bg.png"
+    description: "A dark, moody, and royal background featuring deep crimson and black gradients with subtle glowing gold dust, geometric art deco elements, and a sense of luxury and high stakes gaming. No text."
+    aspect_ratio: "16:9"
+  - path: "artifacts/admin/public/images/logo.png"
+    description: "A luxury minimal emblem of a royal golden crown stylized with geometric lines, on a transparent background. Dark red and gold color palette. No text."
+    aspect_ratio: "1:1"
+
+notes:
+  - All admin API routes are prefixed with /api/admin/
+  - Authentication uses JWT stored in localStorage under 'admin_token'
+  - The API expects 'Authorization: Bearer <token>' in the headers
