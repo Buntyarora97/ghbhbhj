@@ -6,8 +6,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { Colors } from "@/constants/colors";
+import { api } from "../../lib/api";
+import { Colors } from "../../constants/colors";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: Colors.warning,

@@ -8,9 +8,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/context/AuthContext";
-import { api } from "@/lib/api";
-import { Colors } from "@/constants/colors";
+import { useAuth } from "../../context/AuthContext";
+import { api } from "../../lib/api";
+import { Colors } from "../../constants/colors";
 
 const TYPE_ICONS: Record<string, { icon: keyof typeof Ionicons.glyphMap; color: string }> = {
   deposit: { icon: "arrow-down-circle", color: Colors.success },

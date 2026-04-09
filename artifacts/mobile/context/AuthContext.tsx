@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { api } from "@/lib/api";
+import { api } from "../lib/api";
 
 interface User {
   id: number;

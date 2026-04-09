@@ -9,9 +9,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/context/AuthContext";
-import { api } from "@/lib/api";
-import { Colors } from "@/constants/colors";
+import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
+import { Colors } from "../constants/colors";
 
 const QUICK_AMOUNTS = [10, 50, 100, 200, 500, 1000];
 

@@ -3,8 +3,8 @@ import { Tabs, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { useAuth } from "@/context/AuthContext";
-import { Colors } from "@/constants/colors";
+import { useAuth } from "../../context/AuthContext";
+import { Colors } from "../../constants/colors";
 
 function TabLayout() {
   const isIOS = Platform.OS === "ios";

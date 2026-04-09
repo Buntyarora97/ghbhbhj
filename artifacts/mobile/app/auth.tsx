@@ -8,8 +8,8 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useAuth } from "@/context/AuthContext";
-import { Colors } from "@/constants/colors";
+import { useAuth } from "../context/AuthContext";
+import { Colors } from "../constants/colors";
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();

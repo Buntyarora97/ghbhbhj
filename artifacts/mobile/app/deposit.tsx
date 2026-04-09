@@ -8,8 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { Colors } from "@/constants/colors";
+import { api } from "../lib/api";
+import { Colors } from "../constants/colors";
 
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
 
