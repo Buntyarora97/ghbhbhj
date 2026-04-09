@@ -2,7 +2,6 @@ pnpm-workspace.yaml
 pnpm-lock.yaml
 .pnpmfile.cjs
 .npmrc
-lib/
 artifacts/admin/
 artifacts/api-server/
 artifacts/mockup-sandbox/
