@@ -3,7 +3,7 @@ import { useDeposits, useApproveDeposit, useRejectDeposit } from "@/hooks/use-tr
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, X, ExternalLink, ArrowDownCircle } from "lucide-react";
+import { Check, X, ExternalLink, ArrowDownCircle, Hash } from "lucide-react";
 
 export default function DepositsPage() {
   const { data, isLoading } = useDeposits();
@@ -25,9 +25,9 @@ export default function DepositsPage() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Amount</TableHead>
-              <TableHead>UPI ID Used</TableHead>
+              <TableHead>UPI ID</TableHead>
+              <TableHead>UTR / Reference ID</TableHead>
               <TableHead>Date & Time</TableHead>
-              <TableHead>Proof</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -51,16 +51,17 @@ export default function DepositsPage() {
                     </span>
                   </TableCell>
                   <TableCell className="font-mono text-sm text-primary">{req.upiId}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{formatDate(req.createdAt)}</TableCell>
                   <TableCell>
-                    {req.screenshotUrl ? (
-                      <a href={req.screenshotUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-blue-400 hover:underline text-sm">
-                        View <ExternalLink className="w-3 h-3" />
-                      </a>
+                    {req.utrId ? (
+                      <span className="flex items-center gap-1 font-mono text-sm font-bold text-yellow-400">
+                        <Hash className="w-3 h-3" />
+                        {req.utrId}
+                      </span>
                     ) : (
-                      <span className="text-muted-foreground text-xs">No screenshot</span>
+                      <span className="text-muted-foreground text-xs">Not provided</span>
                     )}
                   </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{formatDate(req.createdAt)}</TableCell>
                   <TableCell>
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                       req.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :

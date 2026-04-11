@@ -60,7 +60,7 @@ router.get("/active-upi", authMiddleware, async (req, res) => {
 router.post("/deposit", authMiddleware, async (req, res) => {
   try {
     const userId = (req as any).userId;
-    const { amount, upiId, screenshotUrl } = req.body;
+    const { amount, upiId, utrId, screenshotUrl } = req.body;
     if (!amount || !upiId) {
       return res.status(400).json({ success: false, message: "Amount and UPI ID required" });
     }
@@ -71,6 +71,7 @@ router.post("/deposit", authMiddleware, async (req, res) => {
       userId,
       amount: amount.toFixed(2),
       upiId,
+      utrId: utrId || null,
       screenshotUrl: screenshotUrl || null,
       status: "pending",
     });

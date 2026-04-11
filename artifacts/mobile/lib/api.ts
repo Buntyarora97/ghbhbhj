@@ -52,7 +52,7 @@ export const api = {
     balance: () => request<{ balance: string }>("GET", "/wallet/balance"),
     transactions: () => request<{ transactions: any[] }>("GET", "/wallet/transactions"),
     activeUpi: () => request<{ upiId: string; holderName?: string }>("GET", "/wallet/active-upi"),
-    deposit: (body: { amount: number; upiId: string; screenshotUrl?: string }) =>
+    deposit: (body: { amount: number; upiId: string; utrId?: string; screenshotUrl?: string }) =>
       request<{ success: boolean; message: string }>("POST", "/wallet/deposit", body),
     withdraw: (body: { amount: number; upiId: string }) =>
       request<{ success: boolean; message: string }>("POST", "/wallet/withdraw", body),

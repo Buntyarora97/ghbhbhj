@@ -7,6 +7,7 @@ export const depositRequestsTable = pgTable("deposit_requests", {
   userId: integer("user_id").notNull(),
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   upiId: text("upi_id").notNull(),
+  utrId: text("utr_id"),
   screenshotUrl: text("screenshot_url"),
   status: text("status").notNull().default("pending"), // 'pending' | 'approved' | 'rejected'
   adminNote: text("admin_note"),
