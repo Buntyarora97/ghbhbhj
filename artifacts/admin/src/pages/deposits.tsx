@@ -3,7 +3,7 @@ import { useDeposits, useApproveDeposit, useRejectDeposit } from "@/hooks/use-tr
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, X, ExternalLink, ArrowDownCircle, Hash } from "lucide-react";
+import { Check, X, ArrowDownCircle, Hash, Copy, ShieldCheck } from "lucide-react";
 
 export default function DepositsPage() {
   const { data, isLoading } = useDeposits();
@@ -11,12 +11,27 @@ export default function DepositsPage() {
   const reject = useRejectDeposit();
 
   const deposits = data?.deposits || [];
+  const pendingCount = deposits.filter((req) => req.status === "pending").length;
+
+  const copyText = async (text: string) => {
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-display font-bold text-white mb-2">Deposit Requests</h1>
-        <p className="text-muted-foreground">Review and approve user deposit requests.</p>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-display font-bold text-white mb-2">Deposit Requests</h1>
+          <p className="text-muted-foreground">User ke UTR/reference ko bank UPI payment se match karke approve karo.</p>
+        </div>
+        <div className="bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
+          <ShieldCheck className="w-5 h-5 text-green-400" />
+          <div>
+            <p className="text-sm font-semibold text-green-300">{pendingCount} pending payment match</p>
+            <p className="text-xs text-muted-foreground">Approve karte hi wallet balance add ho jayega</p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl">
@@ -53,10 +68,16 @@ export default function DepositsPage() {
                   <TableCell className="font-mono text-sm text-primary">{req.upiId}</TableCell>
                   <TableCell>
                     {req.utrId ? (
-                      <span className="flex items-center gap-1 font-mono text-sm font-bold text-yellow-400">
+                      <button
+                        type="button"
+                        onClick={() => copyText(req.utrId)}
+                        className="flex items-center gap-1 font-mono text-sm font-bold text-yellow-400 hover:text-yellow-300"
+                        title="Copy UTR / Reference ID"
+                      >
                         <Hash className="w-3 h-3" />
                         {req.utrId}
-                      </span>
+                        <Copy className="w-3 h-3 opacity-70" />
+                      </button>
                     ) : (
                       <span className="text-muted-foreground text-xs">Not provided</span>
                     )}
@@ -79,7 +100,7 @@ export default function DepositsPage() {
                           size="sm"
                           className="border-green-500/30 text-green-400 hover:bg-green-500/10 hover:text-green-300"
                           onClick={() => {
-                            if (window.confirm("Approve this deposit? Amount will be added to user wallet.")) {
+                            if (window.confirm(`Approve ₹${req.amount} deposit for ${req.userName || "user"}? Wallet mein amount turant add ho jayega.`)) {
                               approve.mutate(req.id);
                             }
                           }}

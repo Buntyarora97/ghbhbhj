@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import {
   View, Text, TextInput, Pressable, StyleSheet,
-  ScrollView, ActivityIndicator, Alert, Platform, Linking, Clipboard
+  ScrollView, ActivityIndicator, Alert, Linking
 } from "react-native";
+import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,12 +14,18 @@ import { Colors } from "../constants/colors";
 
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
 
-const PAYMENT_APPS = [
-  { name: "PhonePe", icon: "phone-portrait-outline", color: "#5f259f", scheme: "phonepe://pay" },
+const PAYMENT_APPS: { name: string; icon: keyof typeof Ionicons.glyphMap; color: string; scheme: string }[] = [
+  { name: "Paytm", icon: "wallet-outline", color: "#00BAF2", scheme: "paytmmp://pay" },
   { name: "GPay", icon: "logo-google", color: "#4285F4", scheme: "tez://upi/pay" },
-  { name: "Paytm", icon: "wallet-outline", color: "#002970", scheme: "paytmmp://pay" },
-  { name: "BHIM", icon: "card-outline", color: "#00529B", scheme: "upi://pay" },
+  { name: "PhonePe", icon: "phone-portrait-outline", color: "#5f259f", scheme: "phonepe://pay" },
+  { name: "Other UPI", icon: "card-outline", color: "#16A34A", scheme: "upi://pay" },
 ];
+
+function buildUpiUrl(scheme: string, upiId: string, holderName: string, amountValue: number) {
+  const query = `pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(holderName)}${amountValue ? `&am=${amountValue.toFixed(2)}` : ""}&cu=INR&tn=${encodeURIComponent("Haryana Ki Shan wallet deposit")}`;
+  const separator = scheme.includes("?") ? "&" : "?";
+  return `${scheme}${separator}${query}`;
+}
 
 export default function DepositScreen() {
   const insets = useSafeAreaInsets();
@@ -33,11 +40,12 @@ export default function DepositScreen() {
     queryFn: api.wallet.activeUpi,
   });
 
-  const handleCopyUpi = () => {
+  const handleCopyUpi = async () => {
     if (upiData?.upiId) {
-      Clipboard.setString(upiData.upiId);
+      await Clipboard.setStringAsync(upiData.upiId);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      Alert.alert("Copied", "UPI ID copy ho gayi hai.");
     }
   };
 
@@ -46,26 +54,36 @@ export default function DepositScreen() {
     const upiId = upiData?.upiId;
     const name = upiData?.holderName || "Haryana Ki Shan";
 
-    let url = scheme;
-    if (upiId) {
-      url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}${amt ? `&am=${amt}` : ""}&cu=INR`;
+    if (!upiId) {
+      Alert.alert("Error", "UPI ID available nahi hai. Thodi der baad try karo.");
+      return;
+    }
+    if (!amt || amt < 50) {
+      Alert.alert("Amount Required", "Payment app open karne se pehle minimum ₹50 amount enter karo.");
+      return;
     }
 
+    const url = buildUpiUrl(scheme, upiId, name, amt);
+    const fallbackUrl = buildUpiUrl("upi://pay", upiId, name, amt);
     Linking.canOpenURL(url).then((supported) => {
       if (supported) {
         Linking.openURL(url);
       } else {
-        Linking.openURL(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&cu=INR`).catch(() => {
-          Alert.alert("App Not Found", "Please open the payment app manually and pay to the UPI ID shown above.");
+        Linking.openURL(fallbackUrl).catch(() => {
+          Alert.alert("App Not Found", "Payment app manually open karke upar wali UPI ID par exact amount pay karo.");
         });
       }
+    }).catch(() => {
+      Linking.openURL(fallbackUrl).catch(() => {
+        Alert.alert("App Not Found", "Payment app manually open karke upar wali UPI ID par exact amount pay karo.");
+      });
     });
   };
 
   const handleDeposit = async () => {
     const amt = parseFloat(amount);
-    if (!amt || amt < 100) {
-      return Alert.alert("Error", "Minimum deposit amount is ₹100");
+    if (!amt || amt < 50) {
+      return Alert.alert("Error", "Minimum deposit amount is ₹50");
     }
     if (!upiData?.upiId) {
       return Alert.alert("Error", "No UPI account available. Please try later.");
@@ -82,7 +100,7 @@ export default function DepositScreen() {
       });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       Alert.alert("Request Submitted!", resp.message || "Your deposit request has been submitted. It will be approved within a few minutes.", [
-        { text: "OK", onPress: () => router.back() }
+        { text: "OK", onPress: () => router.back() },
       ]);
     } catch (e: any) {
       Alert.alert("Error", e.message || "Failed to submit deposit request");
@@ -148,9 +166,10 @@ export default function DepositScreen() {
                     key={app.name}
                     style={styles.payAppBtn}
                     onPress={() => handleOpenPaymentApp(app.scheme)}
+                    disabled={!upiData?.upiId}
                   >
                     <View style={[styles.payAppIcon, { backgroundColor: app.color + "20", borderColor: app.color + "40" }]}>
-                      <Ionicons name={app.icon as any} size={20} color={app.color} />
+                      <Ionicons name={app.icon} size={20} color={app.color} />
                     </View>
                     <Text style={styles.payAppName}>{app.name}</Text>
                   </Pressable>
@@ -159,7 +178,7 @@ export default function DepositScreen() {
             </View>
 
             <View style={styles.steps}>
-              {["Copy UPI ID ya Pay via App button use karo", "Exact amount bhejo", "UTR/Reference ID copy karke neeche enter karo"].map((step, i) => (
+              {["Amount enter karo", "Paytm, Google Pay, PhonePe ya Other UPI se exact payment karo", "Payment ke baad UTR/Reference ID neeche enter karke submit karo"].map((step, i) => (
                 <View key={i} style={styles.stepRow}>
                   <View style={styles.stepNum}>
                     <Text style={styles.stepNumText}>{i + 1}</Text>
@@ -172,7 +191,7 @@ export default function DepositScreen() {
         </View>
 
         {/* Amount Input */}
-        <Text style={styles.label}>Deposit Amount (Min. ₹100)</Text>
+        <Text style={styles.label}>Deposit Amount (Min. ₹50)</Text>
         <View style={styles.amountInput}>
           <Text style={styles.rupeeSign}>₹</Text>
           <TextInput
@@ -213,7 +232,7 @@ export default function DepositScreen() {
           />
         </View>
         <Text style={styles.utrHint}>
-          Payment karne ke baad app mein Transaction ID / UTR milega
+          Payment successful hone ke baad Paytm/GPay/PhonePe mein Transaction ID / UTR milega
         </Text>
 
         <View style={styles.noteBox}>

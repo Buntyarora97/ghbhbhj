@@ -61,17 +61,42 @@ router.post("/deposit", authMiddleware, async (req, res) => {
   try {
     const userId = (req as any).userId;
     const { amount, upiId, utrId, screenshotUrl } = req.body;
-    if (!amount || !upiId) {
+    const depositAmount = Number(amount);
+    const cleanUpiId = typeof upiId === "string" ? upiId.trim() : "";
+    const cleanUtrId = typeof utrId === "string" ? utrId.trim().toUpperCase().replace(/\s+/g, "") : "";
+
+    if (!depositAmount || !cleanUpiId) {
       return res.status(400).json({ success: false, message: "Amount and UPI ID required" });
     }
-    if (amount < 50) {
+    if (depositAmount < 50) {
       return res.status(400).json({ success: false, message: "Minimum deposit is ₹50" });
     }
+    if (!cleanUtrId) {
+      return res.status(400).json({ success: false, message: "UTR / Reference ID required" });
+    }
+    if (!/^[A-Z0-9]{6,30}$/.test(cleanUtrId)) {
+      return res.status(400).json({ success: false, message: "Enter a valid UTR / Reference ID" });
+    }
+
+    const activeUpi = await db.select().from(upiAccountsTable)
+      .where(eq(upiAccountsTable.upiId, cleanUpiId))
+      .limit(1);
+    if (activeUpi.length === 0 || !activeUpi[0].isActive) {
+      return res.status(400).json({ success: false, message: "Selected UPI ID is not active. Please refresh and try again." });
+    }
+
+    const existingUtr = await db.select().from(depositRequestsTable)
+      .where(eq(depositRequestsTable.utrId, cleanUtrId))
+      .limit(5);
+    if (existingUtr.some((request) => request.status !== "rejected")) {
+      return res.status(400).json({ success: false, message: "This UTR / Reference ID is already submitted" });
+    }
+
     await db.insert(depositRequestsTable).values({
       userId,
-      amount: amount.toFixed(2),
-      upiId,
-      utrId: utrId || null,
+      amount: depositAmount.toFixed(2),
+      upiId: cleanUpiId,
+      utrId: cleanUtrId,
       screenshotUrl: screenshotUrl || null,
       status: "pending",
     });

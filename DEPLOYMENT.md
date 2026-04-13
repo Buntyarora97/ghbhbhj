@@ -38,12 +38,12 @@ cd artifacts/admin
 VITE_API_BASE_URL=https://your-render-url.onrender.com pnpm run build
 ```
 
-This creates a `dist/` folder inside `artifacts/admin/`.
+This creates the production files inside `artifacts/admin/dist/public/`.
 
 ### Step 2: Upload to Hostinger
 1. Login to Hostinger → File Manager
 2. Go to `public_html/` (or create subfolder like `admin/`)
-3. Upload ALL files from `artifacts/admin/dist/` to `public_html/`
+3. Upload ALL files from `artifacts/admin/dist/public/` to `public_html/`
 4. Make sure `index.html` is in the root of `public_html/`
 
 ### Step 3: Fix routing (important!)
@@ -87,7 +87,7 @@ const BASE_URL = "https://your-render-url.onrender.com/api";
 ### Step 5: Build APK
 ```bash
 cd artifacts/mobile
-eas build --platform android --profile preview
+eas build --platform android --profile production
 ```
 
 When prompted:

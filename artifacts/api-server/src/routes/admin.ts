@@ -347,7 +347,7 @@ router.patch("/deposits/:id/approve", adminAuthMiddleware, async (req, res) => {
         type: "deposit",
         amount: deposit.amount,
         status: "completed",
-        description: "Deposit approved by admin",
+        description: `Deposit approved by admin${deposit.utrId ? ` - UTR ${deposit.utrId}` : ""}`,
       });
     }
     return res.json({ success: true, message: "Deposit approved" });
@@ -359,6 +359,9 @@ router.patch("/deposits/:id/approve", adminAuthMiddleware, async (req, res) => {
 router.patch("/deposits/:id/reject", adminAuthMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    const [deposit] = await db.select().from(depositRequestsTable).where(eq(depositRequestsTable.id, id)).limit(1);
+    if (!deposit) return res.status(404).json({ success: false, message: "Deposit not found" });
+    if (deposit.status !== "pending") return res.status(400).json({ success: false, message: "Already processed" });
     await db.update(depositRequestsTable).set({ status: "rejected" }).where(eq(depositRequestsTable.id, id));
     return res.json({ success: true, message: "Deposit rejected" });
   } catch (err) {
