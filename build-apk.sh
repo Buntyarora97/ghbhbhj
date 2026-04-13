@@ -11,4 +11,4 @@ fi
 
 echo "=== Logged in as: $(npx eas-cli@latest whoami) ==="
 echo "=== Starting APK Build ==="
-EAS_BUILD_NO_EXPO_GO_WARNING=true npx eas-cli@latest build --platform android --profile production
+EAS_NO_VCS=1 EAS_BUILD_NO_EXPO_GO_WARNING=true npx eas-cli@latest build --platform android --profile production
