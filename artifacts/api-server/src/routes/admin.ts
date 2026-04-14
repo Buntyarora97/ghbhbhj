@@ -157,6 +157,25 @@ router.patch("/users/:id/balance", adminAuthMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/users/:id", adminAuthMiddleware, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    await db.delete(depositRequestsTable).where(eq(depositRequestsTable.userId, id));
+    await db.delete(withdrawRequestsTable).where(eq(withdrawRequestsTable.userId, id));
+    await db.delete(transactionsTable).where(eq(transactionsTable.userId, id));
+    await db.delete(betsTable).where(eq(betsTable.userId, id));
+    await db.delete(usersTable).where(eq(usersTable.id, id));
+
+    return res.json({ success: true, message: "User and related entries deleted" });
+  } catch (err) {
+    console.error("Delete user error:", err);
+    return res.status(500).json({ success: false, message: "Error deleting user" });
+  }
+});
+
 router.patch("/users/:id/password", adminAuthMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -369,6 +388,19 @@ router.patch("/deposits/:id/reject", adminAuthMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/deposits/:id", adminAuthMiddleware, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const [deposit] = await db.select().from(depositRequestsTable).where(eq(depositRequestsTable.id, id)).limit(1);
+    if (!deposit) return res.status(404).json({ success: false, message: "Deposit not found" });
+
+    await db.delete(depositRequestsTable).where(eq(depositRequestsTable.id, id));
+    return res.json({ success: true, message: "Deposit entry deleted" });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error deleting deposit" });
+  }
+});
+
 router.get("/withdrawals", adminAuthMiddleware, async (_req, res) => {
   try {
     const withdrawals = await db.select({
@@ -424,6 +456,19 @@ router.patch("/withdrawals/:id/reject", adminAuthMiddleware, async (req, res) =>
     return res.json({ success: true, message: "Withdrawal rejected, amount refunded" });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Error" });
+  }
+});
+
+router.delete("/withdrawals/:id", adminAuthMiddleware, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const [withdrawal] = await db.select().from(withdrawRequestsTable).where(eq(withdrawRequestsTable.id, id)).limit(1);
+    if (!withdrawal) return res.status(404).json({ success: false, message: "Withdrawal not found" });
+
+    await db.delete(withdrawRequestsTable).where(eq(withdrawRequestsTable.id, id));
+    return res.json({ success: true, message: "Withdrawal entry deleted" });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error deleting withdrawal" });
   }
 });
 

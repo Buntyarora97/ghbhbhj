@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { useUsers, useBlockUser, useEditBalance } from "@/hooks/use-users";
+import { useUsers, useBlockUser, useEditBalance, useDeleteUser } from "@/hooks/use-users";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Search, Ban, CheckCircle, Wallet, History } from "lucide-react";
+import { Search, Ban, CheckCircle, Wallet, Trash2 } from "lucide-react";
 
 export default function UsersPage() {
   const { data, isLoading } = useUsers();
   const blockUser = useBlockUser();
   const editBalance = useEditBalance();
+  const deleteUser = useDeleteUser();
   
   const [search, setSearch] = useState("");
   const [balanceModal, setBalanceModal] = useState<{ open: boolean; user: any | null }>({ open: false, user: null });
@@ -117,6 +118,19 @@ export default function UsersPage() {
                         title={user.isBlocked ? "Unblock User" : "Block User"}
                       >
                         {user.isBlocked ? <CheckCircle className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm(`Delete ${user.name}? Is user ki deposits, withdrawals, bets aur wallet history bhi delete ho jayegi.`)) {
+                            deleteUser.mutate(user.id);
+                          }
+                        }}
+                        isLoading={deleteUser.isPending}
+                        title="Delete User"
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </TableCell>

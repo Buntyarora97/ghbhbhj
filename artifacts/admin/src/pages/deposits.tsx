@@ -1,14 +1,15 @@
 import React from "react";
-import { useDeposits, useApproveDeposit, useRejectDeposit } from "@/hooks/use-transactions";
+import { useDeposits, useApproveDeposit, useRejectDeposit, useDeleteDeposit } from "@/hooks/use-transactions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, X, ArrowDownCircle, Hash, Copy, ShieldCheck } from "lucide-react";
+import { Check, X, ArrowDownCircle, Hash, Copy, ShieldCheck, Trash2 } from "lucide-react";
 
 export default function DepositsPage() {
   const { data, isLoading } = useDeposits();
   const approve = useApproveDeposit();
   const reject = useRejectDeposit();
+  const deleteDeposit = useDeleteDeposit();
 
   const deposits = data?.deposits || [];
   const pendingCount = deposits.filter((req) => req.status === "pending").length;
@@ -93,8 +94,9 @@ export default function DepositsPage() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {req.status === 'pending' && (
-                      <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-2">
+                      {req.status === 'pending' && (
+                        <>
                         <Button
                           variant="outline"
                           size="sm"
@@ -119,8 +121,22 @@ export default function DepositsPage() {
                         >
                           <X className="w-4 h-4 mr-1" /> Reject
                         </Button>
-                      </div>
-                    )}
+                        </>
+                      )}
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm(`Delete deposit entry ₹${req.amount} for ${req.userName || "user"}? Ye sirf record delete karega.`)) {
+                            deleteDeposit.mutate(req.id);
+                          }
+                        }}
+                        isLoading={deleteDeposit.isPending}
+                        title="Delete Deposit Entry"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

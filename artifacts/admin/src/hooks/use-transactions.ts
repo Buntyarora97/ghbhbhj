@@ -30,6 +30,17 @@ export function useRejectDeposit() {
   });
 }
 
+export function useDeleteDeposit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => fetchApi(`/deposits/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deposits"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    },
+  });
+}
+
 export function useWithdrawals() {
   return useQuery({
     queryKey: ["withdrawals"],
@@ -55,6 +66,17 @@ export function useRejectWithdrawal() {
     mutationFn: (id: number) => fetchApi(`/withdrawals/${id}/reject`, { method: "PATCH" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["withdrawals"] });
+    },
+  });
+}
+
+export function useDeleteWithdrawal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => fetchApi(`/withdrawals/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["withdrawals"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
   });
 }

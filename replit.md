@@ -13,6 +13,7 @@ Full-stack Satta Matka gaming platform. pnpm workspace monorepo using TypeScript
 - **Super Admin** system: One master admin manages sub-admins (create/delete/password reset)
 - **Min deposit**: ₹50 | **Min bet**: ₹10
 - **UPI deposit flow**: Mobile users can copy the active UPI ID, open Paytm/Google Pay/PhonePe/Other UPI with the exact amount, then submit a required UTR/reference ID. Admin deposit approval credits the wallet immediately, and duplicate UTR/reference submissions are blocked.
+- **Admin delete controls**: Admin can delete user entries (including related deposits, withdrawals, bets and transaction history), deposit request records, withdrawal request records, markets, UPI accounts and sub-admin records from the admin panel.
 - **Auto win/loss**: Declared results automatically credit winners and mark losers
 - **Bet analytics**: Shows which numbers have most money at stake (risk exposure)
 - **Home page**: Latest Results banner, live ticker, market status cards

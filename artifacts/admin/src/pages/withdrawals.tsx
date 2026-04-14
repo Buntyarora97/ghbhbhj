@@ -1,14 +1,15 @@
 import React from "react";
-import { useWithdrawals, useApproveWithdrawal, useRejectWithdrawal } from "@/hooks/use-transactions";
+import { useWithdrawals, useApproveWithdrawal, useRejectWithdrawal, useDeleteWithdrawal } from "@/hooks/use-transactions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, X, ArrowUpCircle } from "lucide-react";
+import { Check, X, ArrowUpCircle, Trash2 } from "lucide-react";
 
 export default function WithdrawalsPage() {
   const { data, isLoading } = useWithdrawals();
   const approve = useApproveWithdrawal();
   const reject = useRejectWithdrawal();
+  const deleteWithdrawal = useDeleteWithdrawal();
 
   const withdrawals = data?.withdrawals || [];
 
@@ -71,8 +72,9 @@ export default function WithdrawalsPage() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {req.status === 'pending' && (
-                      <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-2">
+                      {req.status === 'pending' && (
+                        <>
                         <Button
                           variant="primary"
                           size="sm"
@@ -97,8 +99,22 @@ export default function WithdrawalsPage() {
                         >
                           <X className="w-4 h-4 mr-1" /> Reject & Refund
                         </Button>
-                      </div>
-                    )}
+                        </>
+                      )}
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm(`Delete withdrawal entry ₹${req.amount} for ${req.userName || "user"}? Ye sirf record delete karega.`)) {
+                            deleteWithdrawal.mutate(req.id);
+                          }
+                        }}
+                        isLoading={deleteWithdrawal.isPending}
+                        title="Delete Withdrawal Entry"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
