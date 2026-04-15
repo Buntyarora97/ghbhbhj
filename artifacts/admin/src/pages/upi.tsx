@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
-import { CreditCard, Trash2, Plus, QrCode, Upload, X, ImageIcon, Pencil } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { CreditCard, Trash2, Plus, QrCode, Upload, X, ImageIcon, Pencil, Loader2 } from "lucide-react";
 
 function QrUploadBox({
   value,
@@ -13,24 +14,45 @@ function QrUploadBox({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
+  const inputId = React.useId();
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Sirf image file upload karein (PNG/JPG/JPEG)");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size 5MB se kam honi chahiye");
+      e.target.value = "";
+      return;
+    }
+
+    setLoading(true);
     const reader = new FileReader();
     reader.onload = (ev) => {
       const result = ev.target?.result as string;
       onChange(result);
+      setLoading(false);
+    };
+    reader.onerror = () => {
+      alert("File read karne mein error aayi");
+      setLoading(false);
     };
     reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+      <p className="block text-sm font-medium text-muted-foreground mb-1.5">
         QR Code Image (Optional)
-      </label>
+      </p>
       {value ? (
         <div className="relative inline-block">
           <img
@@ -47,20 +69,25 @@ function QrUploadBox({
           </button>
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="flex flex-col items-center justify-center w-40 h-40 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:border-primary hover:text-primary transition-colors gap-2 text-sm"
+        <label
+          htmlFor={inputId}
+          className="flex flex-col items-center justify-center w-40 h-40 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:border-primary hover:text-primary transition-colors gap-2 text-sm cursor-pointer"
         >
-          <Upload className="w-6 h-6" />
-          <span>Upload QR Image</span>
-          <span className="text-xs opacity-60">PNG / JPG / JPEG</span>
-        </button>
+          {loading ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <>
+              <Upload className="w-6 h-6" />
+              <span>Upload QR Image</span>
+              <span className="text-xs opacity-60">PNG / JPG / JPEG</span>
+            </>
+          )}
+        </label>
       )}
       <input
-        ref={fileRef}
+        id={inputId}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
         className="hidden"
         onChange={handleFile}
       />
@@ -78,6 +105,7 @@ export default function UpiPage() {
   const addUpi = useAddUpiAccount();
   const deleteUpi = useDeleteUpiAccount();
   const updateUpi = useUpdateUpiAccount();
+  const { toast } = useToast();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [upiId, setUpiId] = useState("");
@@ -93,11 +121,20 @@ export default function UpiPage() {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!upiId) return;
-    await addUpi.mutateAsync({ upiId, holderName, qrImageUrl: qrImageUrl || undefined });
-    setModalOpen(false);
-    setUpiId("");
-    setHolderName("");
-    setQrImageUrl("");
+    try {
+      await addUpi.mutateAsync({ upiId, holderName, qrImageUrl: qrImageUrl || undefined });
+      toast({ title: "UPI Account Add Ho Gaya!", description: `${upiId} successfully add kiya gaya.` });
+      setModalOpen(false);
+      setUpiId("");
+      setHolderName("");
+      setQrImageUrl("");
+    } catch (err: any) {
+      toast({
+        title: "Error!",
+        description: err?.message || "UPI account add karne mein error aayi.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleOpenEdit = (acc: any) => {
@@ -109,10 +146,33 @@ export default function UpiPage() {
   const handleSaveQr = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingId) return;
-    await updateUpi.mutateAsync({ id: editingId, qrImageUrl: editQrImageUrl || null });
-    setEditModalOpen(false);
-    setEditingId(null);
-    setEditQrImageUrl("");
+    try {
+      await updateUpi.mutateAsync({ id: editingId, qrImageUrl: editQrImageUrl || null });
+      toast({ title: "QR Code Update Ho Gaya!", description: "QR image successfully save ki gayi." });
+      setEditModalOpen(false);
+      setEditingId(null);
+      setEditQrImageUrl("");
+    } catch (err: any) {
+      toast({
+        title: "Error!",
+        description: err?.message || "QR code save karne mein error aayi.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async (id: number, upiId: string) => {
+    if (!window.confirm(`"${upiId}" delete karna chahte hain?`)) return;
+    try {
+      await deleteUpi.mutateAsync(id);
+      toast({ title: "Delete Ho Gaya!", description: `${upiId} delete kar diya gaya.` });
+    } catch (err: any) {
+      toast({
+        title: "Error!",
+        description: err?.message || "Delete karne mein error aayi.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -153,7 +213,6 @@ export default function UpiPage() {
                   </div>
                 </div>
 
-                {/* QR Image preview */}
                 <div className="mb-4">
                   {acc.qrImageUrl ? (
                     <div className="flex flex-col items-center gap-2">
@@ -190,9 +249,7 @@ export default function UpiPage() {
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:bg-destructive/10 hover:text-red-400"
-                      onClick={() => {
-                        if (window.confirm("Delete this UPI account?")) deleteUpi.mutate(acc.id);
-                      }}
+                      onClick={() => handleDelete(acc.id, acc.upiId)}
                       disabled={deleteUpi.isPending}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -242,7 +299,9 @@ export default function UpiPage() {
           <QrUploadBox value={editQrImageUrl} onChange={setEditQrImageUrl} />
           <div className="flex justify-end gap-3 mt-6">
             <Button variant="ghost" type="button" onClick={() => setEditModalOpen(false)}>Cancel</Button>
-            <Button type="submit" isLoading={updateUpi.isPending}>Save QR Code</Button>
+            <Button type="submit" isLoading={updateUpi.isPending}>
+              {updateUpi.isPending ? "Save Ho Raha Hai..." : "Save QR Code"}
+            </Button>
           </div>
         </form>
       </Dialog>
