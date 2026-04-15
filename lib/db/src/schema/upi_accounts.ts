@@ -6,6 +6,7 @@ export const upiAccountsTable = pgTable("upi_accounts", {
   id: serial("id").primaryKey(),
   upiId: text("upi_id").notNull(),
   holderName: text("holder_name"),
+  qrImageUrl: text("qr_image_url"),
   isActive: boolean("is_active").notNull().default(true),
   rotationOrder: integer("rotation_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),

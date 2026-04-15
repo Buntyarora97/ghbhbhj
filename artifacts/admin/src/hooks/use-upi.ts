@@ -11,9 +11,23 @@ export function useUpiAccounts() {
 export function useAddUpiAccount() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { upiId: string; holderName?: string }) => 
+    mutationFn: (data: { upiId: string; holderName?: string; qrImageUrl?: string }) =>
       fetchApi("/upi", {
         method: "POST",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["upi-accounts"] });
+    },
+  });
+}
+
+export function useUpdateUpiAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: number; qrImageUrl?: string | null; isActive?: boolean }) =>
+      fetchApi(`/upi/${id}`, {
+        method: "PATCH",
         body: JSON.stringify(data),
       }),
     onSuccess: () => {

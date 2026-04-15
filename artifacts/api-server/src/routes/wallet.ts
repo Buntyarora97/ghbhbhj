@@ -51,6 +51,7 @@ router.get("/active-upi", authMiddleware, async (req, res) => {
     return res.json({
       upiId: active[0].upiId,
       holderName: active[0].holderName,
+      qrImageUrl: active[0].qrImageUrl || null,
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Error" });
