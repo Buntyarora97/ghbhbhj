@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import QRCode from "react-native-qrcode-svg";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { Colors } from "../constants/colors";
@@ -39,6 +40,12 @@ export default function DepositScreen() {
     queryKey: ["active-upi"],
     queryFn: api.wallet.activeUpi,
   });
+
+  const amountValue = parseFloat(amount);
+  const qrAmount = amountValue && amountValue >= 50 ? amountValue : 0;
+  const qrUpiUrl = upiData?.upiId
+    ? buildUpiUrl("upi://pay", upiData.upiId, upiData.holderName || "Haryana Ki Shan", qrAmount)
+    : "";
 
   const handleCopyUpi = async () => {
     if (upiData?.upiId) {
@@ -156,6 +163,28 @@ export default function DepositScreen() {
                 </Text>
               </Pressable>
             </View>
+
+            {upiData?.upiId && (
+              <View style={styles.qrSection}>
+                <View style={styles.qrHeader}>
+                  <Ionicons name="scan-outline" size={18} color={Colors.gold} />
+                  <Text style={styles.qrTitle}>Scan QR & Pay</Text>
+                </View>
+                <View style={styles.qrBox}>
+                  <QRCode
+                    value={qrUpiUrl}
+                    size={190}
+                    color="#111111"
+                    backgroundColor="#FFFFFF"
+                  />
+                </View>
+                <Text style={styles.qrHint}>
+                  {qrAmount
+                    ? `QR mein ₹${qrAmount.toFixed(2)} amount set hai. Scan karke exact payment karo.`
+                    : "Amount enter karte hi QR exact amount ke saath update ho jayega."}
+                </Text>
+              </View>
+            )}
 
             {/* Payment App Buttons */}
             <View style={styles.payAppsSection}>
@@ -290,6 +319,37 @@ const styles = StyleSheet.create({
   copyBtnActive: { backgroundColor: Colors.gold, borderColor: Colors.gold },
   copyText: { fontFamily: "Inter_600SemiBold", fontSize: 12, color: Colors.gold },
   copyTextActive: { color: Colors.darkBg },
+  qrSection: {
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.gold + "30",
+    backgroundColor: Colors.darkBg + "55",
+  },
+  qrHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 },
+  qrTitle: { fontFamily: "Inter_700Bold", fontSize: 15, color: Colors.textPrimary },
+  qrBox: {
+    width: 216,
+    height: 216,
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 13,
+    borderWidth: 3,
+    borderColor: Colors.gold,
+  },
+  qrHint: {
+    fontFamily: "Inter_500Medium",
+    fontSize: 12,
+    lineHeight: 18,
+    color: Colors.textSecondary,
+    textAlign: "center",
+    marginTop: 12,
+  },
   payAppsSection: { marginBottom: 16 },
   payAppsLabel: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: Colors.textSecondary, marginBottom: 10 },
   payAppsRow: { flexDirection: "row", gap: 10 },
