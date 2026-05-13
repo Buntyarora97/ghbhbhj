@@ -476,7 +476,7 @@ router.get("/upi", adminAuthMiddleware, async (_req, res) => {
   try {
     const upiList = await db.select().from(upiAccountsTable).orderBy(upiAccountsTable.rotationOrder);
     return res.json({
-      upiAccounts: upiList.map(u => ({ id: u.id, upiId: u.upiId, holderName: u.holderName, isActive: u.isActive })),
+      upiAccounts: upiList.map(u => ({ id: u.id, upiId: u.upiId, holderName: u.holderName, qrImageUrl: u.qrImageUrl, isActive: u.isActive })),
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Error" });
@@ -485,12 +485,12 @@ router.get("/upi", adminAuthMiddleware, async (_req, res) => {
 
 router.post("/upi", adminAuthMiddleware, async (req, res) => {
   try {
-    const { upiId, holderName } = req.body;
+    const { upiId, holderName, qrImageUrl } = req.body;
     const count = await db.select().from(upiAccountsTable);
     if (count.length >= 30) {
       return res.status(400).json({ success: false, message: "Maximum 30 UPI accounts allowed" });
     }
-    await db.insert(upiAccountsTable).values({ upiId, holderName: holderName || null, rotationOrder: count.length });
+    await db.insert(upiAccountsTable).values({ upiId, holderName: holderName || null, qrImageUrl: qrImageUrl || null, rotationOrder: count.length });
     return res.json({ success: true, message: "UPI account added" });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Error" });
@@ -500,8 +500,11 @@ router.post("/upi", adminAuthMiddleware, async (req, res) => {
 router.patch("/upi/:id", adminAuthMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { isActive } = req.body;
-    await db.update(upiAccountsTable).set({ isActive }).where(eq(upiAccountsTable.id, id));
+    const { isActive, qrImageUrl } = req.body;
+    const updateData: Record<string, any> = {};
+    if (typeof isActive === "boolean") updateData.isActive = isActive;
+    if (qrImageUrl !== undefined) updateData.qrImageUrl = qrImageUrl || null;
+    await db.update(upiAccountsTable).set(updateData).where(eq(upiAccountsTable.id, id));
     return res.json({ success: true, message: "UPI account updated" });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Error" });

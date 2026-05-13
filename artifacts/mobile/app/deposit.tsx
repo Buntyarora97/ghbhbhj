@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   View, Text, TextInput, Pressable, StyleSheet,
-  ScrollView, ActivityIndicator, Alert, Linking
+  ScrollView, ActivityIndicator, Alert, Linking, Image
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
@@ -171,15 +171,25 @@ export default function DepositScreen() {
                   <Text style={styles.qrTitle}>Scan QR & Pay</Text>
                 </View>
                 <View style={styles.qrBox}>
-                  <QRCode
-                    value={qrUpiUrl}
-                    size={190}
-                    color="#111111"
-                    backgroundColor="#FFFFFF"
-                  />
+                  {upiData.qrImageUrl ? (
+                    <Image
+                      source={{ uri: upiData.qrImageUrl }}
+                      style={{ width: 190, height: 190 }}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <QRCode
+                      value={qrUpiUrl}
+                      size={190}
+                      color="#111111"
+                      backgroundColor="#FFFFFF"
+                    />
+                  )}
                 </View>
                 <Text style={styles.qrHint}>
-                  {qrAmount
+                  {upiData.qrImageUrl
+                    ? "Apne UPI app se is QR code ko scan karke exact amount bhejo."
+                    : qrAmount
                     ? `QR mein ₹${qrAmount.toFixed(2)} amount set hai. Scan karke exact payment karo.`
                     : "Amount enter karte hi QR exact amount ke saath update ho jayega."}
                 </Text>
