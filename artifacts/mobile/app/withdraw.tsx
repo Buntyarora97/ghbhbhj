@@ -12,7 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 import { Colors } from "../constants/colors";
 
-const QUICK_AMOUNTS = [500, 1000, 2000, 5000];
+const QUICK_AMOUNTS = [50, 100, 500, 1000];
 
 export default function WithdrawScreen() {
   const insets = useSafeAreaInsets();
@@ -26,7 +26,7 @@ export default function WithdrawScreen() {
 
   const handleWithdraw = async () => {
     const amt = parseFloat(amount);
-    if (!amt || amt < 500) return Alert.alert("Error", "Minimum withdrawal is ₹500");
+    if (!amt || amt < 50) return Alert.alert("Error", "Minimum withdrawal is ₹50");
     if (amt > balance) return Alert.alert("Error", "Insufficient wallet balance");
     if (!upiId) return Alert.alert("Error", "Please enter your UPI ID");
 
@@ -78,7 +78,7 @@ export default function WithdrawScreen() {
           <Text style={styles.balAmount}>₹{balance.toFixed(2)}</Text>
         </View>
 
-        <Text style={styles.label}>Withdraw Amount (Min. ₹500)</Text>
+        <Text style={styles.label}>Withdraw Amount (Min. ₹50)</Text>
         <View style={styles.amountInput}>
           <Text style={styles.rupeeSign}>₹</Text>
           <TextInput
@@ -125,7 +125,7 @@ export default function WithdrawScreen() {
         <View style={styles.noteBox}>
           <Ionicons name="time" size={16} color={Colors.warning} />
           <Text style={styles.noteText}>
-            Withdrawal requests are processed within 24 hours. Min ₹500, amount will be deducted immediately.
+            Withdrawal requests are processed within 24 hours. Min ₹50, amount will be deducted immediately.
           </Text>
         </View>
 

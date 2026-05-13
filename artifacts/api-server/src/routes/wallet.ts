@@ -113,8 +113,8 @@ router.post("/withdraw", authMiddleware, async (req, res) => {
     if (!amount || !upiId) {
       return res.status(400).json({ success: false, message: "Amount and UPI ID required" });
     }
-    if (amount < 500) {
-      return res.status(400).json({ success: false, message: "Minimum withdrawal is ₹500" });
+    if (amount < 50) {
+      return res.status(400).json({ success: false, message: "Minimum withdrawal is ₹50" });
     }
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
